@@ -1,13 +1,19 @@
 import { Form, Input, Button } from "antd";
 import { Link } from "react-router-dom";
+import { auth } from "../firebase/config";
 
 const LoginPage = () => {
+  const onFinish = (values) => {
+    console.log("Success:", values);
+    auth.signInWithEmailAndPassword(values.email, values.password);
+  };
+
   return (
     <div className="auth-background">
       <div className="div-login">
         <div className="card-lung">Login to see your progress</div>
         <div>
-          <Form name="basic" onFinish={() => null} alignItems="center">
+          <Form name="basic" onFinish={onFinish} alignItems="center">
             <Form.Item
               label="email"
               name="email"
