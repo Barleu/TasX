@@ -13,7 +13,11 @@ const LoginPage = () => {
       <div className="div-login">
         <div className="card-lung">Login to see your progress</div>
         <div>
-          <Form name="basic" onFinish={onFinish} alignItems="center">
+          <Form
+            name="basic"
+            onFinish={onFinish}
+            style={{ alignItems: "center" }}
+          >
             <Form.Item
               label="email"
               name="email"
