@@ -1,6 +1,7 @@
 import React from "react";
 import { Layout, Menu, Button, Dropdown } from "antd";
 import { createFromIconfontCN } from "@ant-design/icons";
+import Sidebar from "./Sidebar";
 
 const { Header, Content } = Layout;
 const IconFont = createFromIconfontCN({
@@ -20,7 +21,7 @@ function PageLayout(props) {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* Add sidebar */}
+      <Sidebar />
       <Layout className="site-layout">
         <Header
           className="site-layout-background"
