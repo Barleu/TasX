@@ -10,7 +10,7 @@ function Home() {
   const [user] = useAuthState(auth);
 
   const mytasksRef = firestore.collection("tasks");
-  const myTasksQuery = mytasksRef.where("userId", "==", user?.uid);
+  const myTasksQuery = mytasksRef.where("userId", "==", user?.uid || "0");
   const [mytasks] = useCollectionData(myTasksQuery, { idField: "id" });
 
   const toggleTask = (taskId, val) => {
@@ -21,7 +21,7 @@ function Home() {
   const taskdoneRef = firestore.collection("tasks");
   const taskdoneQuery = taskdoneRef
     .where("completed", "==", true)
-    .where("userId", "==", user?.uid);
+    .where("userId", "==", user?.uid || "0");
 
   const [taskdone] = useCollectionData(taskdoneQuery, { idField: "id" });
 

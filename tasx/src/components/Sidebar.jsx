@@ -1,81 +1,132 @@
-import React from "react";
-import { Layout, Menu } from "antd";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Layout, Menu, Button, Form, Input, Modal } from "antd";
 import {
   PlusOutlined,
   CalendarOutlined,
   UserOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { firestore } from "../firebase/config";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import useMe from "../hooks/useMe";
 
 const { SubMenu } = Menu;
 
-function ProjectButton({ project }) {
-  return (
-    <Menu.Item key={project.id}>
-      <Link to={`/project/${project.id}`}>{project.title}</Link>
-    </Menu.Item>
-    // link-uire catre baza de date: proiectele care sunt in baza de date vor aparea
-    // sunt butonul de proiecte
-  );
-}
-
 function Sidebar() {
-  const isAdmin = true;
+  const me = useMe();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [projectType, setProjectType] = useState("");
 
-  const projects = [
-    { id: 1, type: "TEAM", title: "Task 1" },
-    { id: 2, type: "TEAM", title: "Task 2" },
-    { id: 3, type: "TEAM", title: "Task 3" },
-    { id: 4, type: "EVENT", title: "Event 1" },
-    { id: 5, type: "EVENT", title: "Event 2" },
-    { id: 6, type: "EVENT", title: "Event 3" },
-  ];
+  const showTeamModal = () => {
+    setIsModalVisible(true);
+    setProjectType("TEAM");
+  };
+  const showEventModal = () => {
+    setIsModalVisible(true);
+    setProjectType("EVENT");
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const projectsRef = firestore.collection("projects");
+  const query = projectsRef.limit(25);
+
+  const [projects] = useCollectionData(query, { idField: "id" });
+  const newCourseRef = firestore.collection("projects").doc();
+
+  const onFinish = (values) => {
+    console.log("Success:", values);
+    newCourseRef.set({
+      title: values.teamName,
+      type: projectType,
+    });
+  };
+
+  if (!projects) {
+    return <p>loading</p>;
+  }
 
   return (
     <Layout.Sider collapsible>
       <div className="logo" />
 
-      <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-        <SubMenu key="sub1" icon={<TeamOutlined />} title="Teams">
+      <Menu theme="dark" mode="inline">
+        <SubMenu key="teams" icon={<TeamOutlined />} title="Teams">
           {projects
             .filter((project) => project.type === "TEAM")
             .map((project) => (
-              <ProjectButton project={project} key={project} />
+              <Menu.Item key={project.id}>
+                <Link to={`/project/${project.id}`}>{project.title}</Link>
+              </Menu.Item>
             ))}
 
-          {isAdmin && (
-            <Menu.Item key="+team" icon={<PlusOutlined />} onClick={() => null}>
-              Create new
-            </Menu.Item>
-          )}
-        </SubMenu>
-
-        <SubMenu key="sub2" icon={<CalendarOutlined />} title="Events">
-          {projects
-            .filter((project) => project.type === "EVENT")
-            .map((project) => (
-              <ProjectButton project={project} key={project.id} />
-            ))}
-
-          {isAdmin && (
+          {me.isAdmin && (
             <Menu.Item
-              key="+event"
+              key="createTeam"
               icon={<PlusOutlined />}
-              onClick={() => null}
+              onClick={showTeamModal}
             >
               Create new
             </Menu.Item>
           )}
         </SubMenu>
-        {/* adaugare camp din baza de date dupa type-ul proiectului */}
-        {isAdmin && (
+
+        <SubMenu key="events" icon={<CalendarOutlined />} title="Events">
+          {projects
+            .filter((project) => project.type === "EVENT")
+            .map((project) => (
+              <Menu.Item key={project.id}>
+                <Link to={`/project/${project.id}`}>{project.title}</Link>
+              </Menu.Item>
+            ))}
+
+          {me.isAdmin && (
+            <Menu.Item
+              key="createEvent"
+              icon={<PlusOutlined />}
+              onClick={showEventModal}
+            >
+              Create new
+            </Menu.Item>
+          )}
+        </SubMenu>
+
+        {me.isAdmin && (
           <Menu.Item key="users" icon={<UserOutlined />}>
-            Users
+            <Link to={`/users/`}>Users</Link>
           </Menu.Item>
         )}
       </Menu>
-      <div>add a new team</div>
+
+      <Modal
+        title="Add a new team!"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Form name="basic" onFinish={onFinish} alignItems="center">
+          <Form.Item
+            label="Name of the team"
+            name="teamName"
+            rules={[{ required: true, message: "Add a new team!" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Add
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </Layout.Sider>
   );
 }

@@ -12,13 +12,16 @@ function logout() {
 }
 
 const menu = (
-  <Menu>
-    <Menu.Item onClick={logout}>logout</Menu.Item>
-  </Menu>
+  <Menu
+    items={[
+      <Menu.Item key="logout" onClick={logout}>
+        Log out
+      </Menu.Item>,
+    ]}
+  />
 );
-function PageLayout(props) {
-  const { children } = props;
 
+function PageLayout({ children }) {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sidebar />
