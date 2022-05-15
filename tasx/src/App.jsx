@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   BrowserRouter as Router,
   Switch,
@@ -7,7 +6,9 @@ import {
   Redirect,
 } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
+
 import { auth } from "./firebase/config";
+import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 
 function App() {
@@ -29,6 +30,10 @@ function App() {
   return (
     <Router>
       <Switch>
+        <Route path="/">
+          <Home />
+        </Route>
+
         <Redirect to="/" />
       </Switch>
     </Router>
