@@ -30,7 +30,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route exact path="/">
+        <Route path="/">
           <Home />
         </Route>
 

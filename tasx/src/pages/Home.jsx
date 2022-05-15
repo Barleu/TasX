@@ -1,15 +1,29 @@
 import React from "react";
 import { Card, Row, Col, Checkbox } from "antd";
-
+import { firestore } from "../firebase/config";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../firebase/config";
 import PageLayout from "../components/PageLayout";
 
 function Home() {
-  const taskdone = [];
-  const mytasks = [];
+  const [user] = useAuthState(auth);
+
+  const mytasksRef = firestore.collection("tasks");
+  const myTasksQuery = mytasksRef.where("userId", "==", user?.uid);
+  const [mytasks] = useCollectionData(myTasksQuery, { idField: "id" });
 
   const toggleTask = (taskId, val) => {
-    console.log(taskId, val);
+    const taskRef = firestore.doc(`/tasks/${taskId}`);
+    taskRef.update({ completed: val });
   };
+
+  const taskdoneRef = firestore.collection("tasks");
+  const taskdoneQuery = taskdoneRef
+    .where("completed", "==", true)
+    .where("userId", "==", user?.uid);
+
+  const [taskdone] = useCollectionData(taskdoneQuery, { idField: "id" });
 
   return (
     <PageLayout>
@@ -26,7 +40,7 @@ function Home() {
           <Col span={12}>
             <Card title="Tasks Done" bordered={false} className="echipa-card">
               {taskdone?.map((task) => (
-                <tr>{task.title}</tr>
+                <div>{task.title}</div>
               ))}
             </Card>
           </Col>
@@ -34,9 +48,8 @@ function Home() {
           <Col span={12}>
             <Card title="Tasks To Do" bordered={false} className="echipa-card">
               {mytasks?.map((task) => (
-                <tr>
-                  {" "}
-                  {task.title}{" "}
+                <div>
+                  {task.title}
                   <Checkbox
                     checked={task.completed}
                     style={{
@@ -44,7 +57,7 @@ function Home() {
                     }}
                     onClick={() => toggleTask(task.id, !task.completed)}
                   />
-                </tr>
+                </div>
               ))}
             </Card>
           </Col>
