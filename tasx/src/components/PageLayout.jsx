@@ -1,6 +1,7 @@
 import React from "react";
 import { Layout, Menu, Button, Dropdown } from "antd";
 import { createFromIconfontCN } from "@ant-design/icons";
+import { auth } from "../firebase/config";
 import Sidebar from "./Sidebar";
 
 const { Header, Content } = Layout;
@@ -8,17 +9,15 @@ const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js",
 });
 function logout() {
-  // Add logout function
+  auth.signOut();
 }
 
 const menu = (
-  <Menu
-    items={[
-      <Menu.Item key="logout" onClick={logout}>
-        Log out
-      </Menu.Item>,
-    ]}
-  />
+  <Menu>
+    <Menu.Item key="logout" onClick={logout}>
+      Log out
+    </Menu.Item>
+  </Menu>
 );
 
 function PageLayout({ children }) {

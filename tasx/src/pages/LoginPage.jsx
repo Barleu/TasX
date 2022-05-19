@@ -1,3 +1,4 @@
+import React from "react";
 import { Form, Input, Button } from "antd";
 import { Link } from "react-router-dom";
 import { auth } from "../firebase/config";
@@ -39,7 +40,7 @@ const LoginPage = () => {
                 Submit
               </Button>
             </Form.Item>
-            Click here to <Link to={`/register/`}>Register</Link>
+            Click here to <Link to="/register">Register</Link>
           </Form>
         </div>
       </div>

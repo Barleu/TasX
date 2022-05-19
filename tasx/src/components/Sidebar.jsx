@@ -111,7 +111,7 @@ function Sidebar() {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Form name="basic" onFinish={onFinish} alignItems="center">
+        <Form name="basic" onFinish={onFinish}>
           <Form.Item
             label="Name of the team"
             name="teamName"
