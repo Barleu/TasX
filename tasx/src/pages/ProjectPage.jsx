@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router";
 
-import { Card, Col, Row, Button } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { Card, Col, Row, Button, Modal, Form, Input } from "antd";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { firestore, auth } from "../firebase/config";
 import PageLayout from "../components/PageLayout";
+import useMe from "../hooks/useMe";
 
 function ProjectPage() {
   const { projectId } = useParams();
+
+  const me = useMe();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const tasksRef = firestore.collection("tasks");
   const tasksQuery = tasksRef
@@ -29,6 +34,30 @@ function ProjectPage() {
     taskRef.update({ userId: user.uid });
   };
 
+  const showTaskModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const newTaskRef = firestore.collection("tasks").doc();
+
+  const onFinish = (values) => {
+    console.log("Success:", values);
+    newTaskRef.set({
+      title: values.taskName,
+      completed: false,
+      projectId: projectId,
+      userId: null,
+    });
+  };
+
   return (
     <PageLayout>
       <div className="site-card">
@@ -38,7 +67,19 @@ function ProjectPage() {
               title="Tasks to take"
               bordered={false}
               className="echipa-card"
-              extra={""}
+              extra={
+                me.isAdmin && (
+                  <Button
+                    key="+task"
+                    icon={<PlusOutlined />}
+                    onClick={showTaskModal}
+                    type="primary"
+                    shape="rectangle"
+                  >
+                    Create new
+                  </Button>
+                )
+              }
             >
               {tasks?.map((task) => (
                 <Row gutter={20} style={{ marginBottom: "20px" }}>
@@ -70,6 +111,29 @@ function ProjectPage() {
           </Col>
         </Row>
       </div>
+
+      <Modal
+        title="Add a new task!"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Form name="basic" onFinish={onFinish} alignItems="center">
+          <Form.Item
+            label="Name of the task"
+            name="taskName"
+            rules={[{ required: true, message: "Add a new task!" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Add
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </PageLayout>
   );
 }
