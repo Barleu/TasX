@@ -6,6 +6,7 @@ import { auth } from "./firebase/config";
 import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ProjectPage from "./pages/ProjectPage";
 
 function App() {
   const [user] = useAuthState(auth);
@@ -28,6 +29,9 @@ function App() {
 
   return (
     <Switch>
+      <Route path="/project/:projectId">
+        <ProjectPage />
+      </Route>
       <Route exact path="/">
         <Home />
       </Route>
