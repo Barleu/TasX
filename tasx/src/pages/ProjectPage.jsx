@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useParams } from "react-router";
+import { useHistory } from "react-router-dom";
 
 import { PlusOutlined } from "@ant-design/icons";
-import { Card, Col, Row, Button, Modal, Form, Input } from "antd";
+import { Card, Col, Row, Button, Modal, Form, Input, Popconfirm } from "antd";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { firestore, auth } from "../firebase/config";
@@ -11,6 +12,7 @@ import useMe from "../hooks/useMe";
 
 function ProjectPage() {
   const { projectId } = useParams();
+  const history = useHistory();
 
   const me = useMe();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -32,6 +34,17 @@ function ProjectPage() {
   const takeTask = (taskId) => {
     const taskRef = firestore.doc(`/tasks/${taskId}`);
     taskRef.update({ userId: user.uid });
+  };
+
+  const deleteTask = (taskId) => {
+    const taskRef = firestore.doc(`/tasks/${taskId}`);
+    taskRef.delete();
+  };
+
+  const deleteProject = () => {
+    const projectRef = firestore.doc(`/projects/${projectId}`);
+    projectRef.delete();
+    history.push("/");
   };
 
   const showTaskModal = () => {
@@ -76,13 +89,16 @@ function ProjectPage() {
                     type="primary"
                     shape="rectangle"
                   >
-                    Create new
+                    New
                   </Button>
                 )
               }
             >
               {tasks?.map((task) => (
-                <Row gutter={20} style={{ marginBottom: "20px" }}>
+                <Row
+                  gutter={10}
+                  style={{ marginBottom: "20px", flexWrap: "nowrap" }}
+                >
                   <Col
                     style={{ flex: "1", display: "flex", alignItems: "center" }}
                   >
@@ -93,6 +109,13 @@ function ProjectPage() {
                       Take me
                     </Button>
                   </Col>
+                  {me.isAdmin && (
+                    <Col>
+                      <Button danger onClick={() => deleteTask(task.id)}>
+                        Delete
+                      </Button>
+                    </Col>
+                  )}
                 </Row>
               ))}
             </Card>
@@ -110,6 +133,19 @@ function ProjectPage() {
             </Card>
           </Col>
         </Row>
+        {me.isAdmin && (
+          <div>
+            <Popconfirm
+              title="Are you sure to delete this record?"
+              onConfirm={() => deleteProject()}
+              onCancel={() => null}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="danger">Delete record</Button>
+            </Popconfirm>
+          </div>
+        )}
       </div>
 
       <Modal
