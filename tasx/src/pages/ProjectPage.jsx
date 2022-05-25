@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useParams } from "react-router";
+import { useHistory } from "react-router-dom";
 
 import { PlusOutlined } from "@ant-design/icons";
-import { Card, Col, Row, Button, Modal, Form, Input } from "antd";
+import { Card, Col, Row, Button, Modal, Form, Input, Popconfirm } from "antd";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { firestore, auth } from "../firebase/config";
@@ -11,6 +12,7 @@ import useMe from "../hooks/useMe";
 
 function ProjectPage() {
   const { projectId } = useParams();
+  const history = useHistory();
 
   const me = useMe();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -37,6 +39,12 @@ function ProjectPage() {
   const deleteTask = (taskId) => {
     const taskRef = firestore.doc(`/tasks/${taskId}`);
     taskRef.delete();
+  };
+
+  const deleteProject = () => {
+    const projectRef = firestore.doc(`/projects/${projectId}`);
+    projectRef.delete();
+    history.push("/");
   };
 
   const showTaskModal = () => {
@@ -100,7 +108,7 @@ function ProjectPage() {
                   </Col>
                   {me.isAdmin && (
                     <Col>
-                      <Button type="danger" onClick={() => deleteTask(task.id)}>
+                      <Button danger onClick={() => deleteTask(task.id)}>
                         Delete
                       </Button>
                     </Col>
@@ -122,6 +130,19 @@ function ProjectPage() {
             </Card>
           </Col>
         </Row>
+        {me.isAdmin && (
+          <div>
+            <Popconfirm
+              title="Are you sure to delete this record?"
+              onConfirm={() => deleteProject()}
+              onCancel={() => null}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="danger">Delete record</Button>
+            </Popconfirm>
+          </div>
+        )}
       </div>
 
       <Modal
