@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Table } from "antd";
+import { Table, Switch } from "antd";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { firestore } from "../firebase/config";
 import PageLayout from "../components/PageLayout";
@@ -10,6 +10,11 @@ function UsersPage() {
   const usersQuery = usersRef;
   const [users] = useCollectionData(usersQuery, { idField: "id" });
 
+  const toggleAdmin = (userId, isAdmin) => {
+    const userRef = firestore.doc(`/users/${userId}`);
+    userRef.update({ isAdmin });
+  };
+
   const columns = [
     {
       title: "Name",
@@ -17,12 +22,19 @@ function UsersPage() {
     },
 
     {
-      title: "Action",
-      render: (text, user) => {
-        return <div></div>;
-      },
+      title: "Is admin",
+      render: (_, user) => (
+        <Switch
+          checked={user.isAdmin}
+          onChange={(checked) => {
+            toggleAdmin(user.id, checked);
+          }}
+        />
+      ),
     },
   ];
+
+  console.log(users);
 
   return (
     <PageLayout>
