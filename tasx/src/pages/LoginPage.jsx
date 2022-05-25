@@ -20,7 +20,7 @@ const LoginPage = () => {
             style={{ alignItems: "center" }}
           >
             <Form.Item
-              label="email"
+              label="Email"
               name="email"
               rules={[{ required: true, message: "Please input your email!" }]}
             >

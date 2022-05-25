@@ -26,7 +26,7 @@ const RegisterPage = () => {
         <div>
           <Form name="basic" onFinish={onFinish} alignItems="center">
             <Form.Item
-              label="email"
+              label="Email"
               name="email"
               rules={[{ required: true, message: "Please input your email!" }]}
             >
@@ -56,7 +56,7 @@ const RegisterPage = () => {
               </Button>
             </Form.Item>
             Click here to
-            <Link to="/login">Login</Link>
+            <Link to="/login"> Login</Link>
           </Form>
         </div>
       </div>
