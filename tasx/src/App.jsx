@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProjectPage from "./pages/ProjectPage";
+import UsersPage from "./pages/UsersPage";
 
 function App() {
   const [user] = useAuthState(auth);
@@ -31,6 +32,9 @@ function App() {
     <Switch>
       <Route path="/project/:projectId">
         <ProjectPage />
+      </Route>
+      <Route path="/users">
+        <UsersPage />
       </Route>
       <Route exact path="/">
         <Home />
