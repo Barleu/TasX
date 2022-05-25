@@ -1,13 +1,12 @@
 import React from "react";
-import { Layout, Menu, Button, Dropdown } from "antd";
-import { createFromIconfontCN } from "@ant-design/icons";
+import { Layout, Menu, Space, Dropdown } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 import { auth } from "../firebase/config";
 import Sidebar from "./Sidebar";
+import useMe from "../hooks/useMe";
 
 const { Header, Content } = Layout;
-const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js",
-});
+
 function logout() {
   auth.signOut();
 }
@@ -21,8 +20,10 @@ const menu = (
 );
 
 function PageLayout({ children }) {
+  const me = useMe();
+
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh", overflowX: "hidden" }}>
       <Sidebar />
       <Layout className="site-layout">
         <Header
@@ -36,9 +37,10 @@ function PageLayout({ children }) {
           }}
         >
           <Dropdown overlay={menu}>
-            <Button type="primary" shape="circle">
-              <IconFont type="icon-tuichu" />
-            </Button>
+            <Space size={10} style={{ color: "#fff", cursor: "default" }}>
+              <UserOutlined />
+              {me?.name ?? "User"}
+            </Space>
           </Dropdown>
         </Header>
 
