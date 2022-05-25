@@ -89,13 +89,16 @@ function ProjectPage() {
                     type="primary"
                     shape="rectangle"
                   >
-                    Create new
+                    New
                   </Button>
                 )
               }
             >
               {tasks?.map((task) => (
-                <Row gutter={20} style={{ marginBottom: "20px" }}>
+                <Row
+                  gutter={10}
+                  style={{ marginBottom: "20px", flexWrap: "nowrap" }}
+                >
                   <Col
                     style={{ flex: "1", display: "flex", alignItems: "center" }}
                   >

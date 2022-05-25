@@ -42,7 +42,7 @@ function PageLayout({ children }) {
           </Dropdown>
         </Header>
 
-        <Content style={{ margin: "0 16px" }}>
+        <Content>
           <div className="card" />
           <div
             className="site-layout-background"
