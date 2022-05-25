@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Table, Switch } from "antd";
+import { Table, Switch, Button } from "antd";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { firestore } from "../firebase/config";
 import PageLayout from "../components/PageLayout";
@@ -15,12 +15,16 @@ function UsersPage() {
     userRef.update({ isAdmin });
   };
 
+  const deleteUser = (userId) => {
+    const userRef = firestore.doc(`/users/${userId}`);
+    userRef.delete();
+  };
+
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
     },
-
     {
       title: "Is admin",
       render: (_, user) => (
@@ -31,10 +35,22 @@ function UsersPage() {
           }}
         />
       ),
+      width: 200,
+    },
+    {
+      title: "Actions",
+      render: (_, user) => (
+        <Button
+          danger
+          onClick={() => {
+            deleteUser(user.id);
+          }}
+        >
+          Delete
+        </Button>
+      ),
     },
   ];
-
-  console.log(users);
 
   return (
     <PageLayout>
