@@ -34,6 +34,11 @@ function ProjectPage() {
     taskRef.update({ userId: user.uid });
   };
 
+  const deleteTask = (taskId) => {
+    const taskRef = firestore.doc(`/tasks/${taskId}`);
+    taskRef.delete();
+  };
+
   const showTaskModal = () => {
     setIsModalVisible(true);
   };
@@ -93,6 +98,13 @@ function ProjectPage() {
                       Take me
                     </Button>
                   </Col>
+                  {me.isAdmin && (
+                    <Col>
+                      <Button type="danger" onClick={() => deleteTask(task.id)}>
+                        Delete
+                      </Button>
+                    </Col>
+                  )}
                 </Row>
               ))}
             </Card>
