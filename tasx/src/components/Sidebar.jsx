@@ -6,6 +6,7 @@ import {
   CalendarOutlined,
   UserOutlined,
   TeamOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { firestore } from "../firebase/config";
 import { useCollectionData } from "react-firebase-hooks/firestore";
@@ -49,17 +50,17 @@ function Sidebar() {
     });
   };
 
-  if (!projects) {
-    return <p>loading</p>;
-  }
-
   return (
     <Layout.Sider collapsible>
       <div className="logo" />
 
       <Menu theme="dark" mode="inline">
+        <Menu.Item icon={<HomeOutlined />}>
+          <Link to="/">Home</Link>
+        </Menu.Item>
+
         <SubMenu key="teams" icon={<TeamOutlined />} title="Teams">
-          {projects
+          {(projects ?? [])
             .filter((project) => project.type === "TEAM")
             .map((project) => (
               <Menu.Item key={project.id}>
@@ -79,7 +80,7 @@ function Sidebar() {
         </SubMenu>
 
         <SubMenu key="events" icon={<CalendarOutlined />} title="Events">
-          {projects
+          {(projects || [])
             .filter((project) => project.type === "EVENT")
             .map((project) => (
               <Menu.Item key={project.id}>

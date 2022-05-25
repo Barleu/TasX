@@ -22,7 +22,7 @@ const menu = (
 
 function PageLayout({ children }) {
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh", overflowX: "hidden" }}>
       <Sidebar />
       <Layout className="site-layout">
         <Header
